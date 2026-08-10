@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop — THE CHICKANKARI STUDIO</title>
+<meta name="description" content="Browse handcrafted Chikankari kurtis, sarees and suit sets.">
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header scrolled">
+  <div class="container">
+    <a href="index.html" class="brand">
+      <img src="assets/logo.png" alt="The Chickankari Studio">
+      <span>The Chickankari Studio</span>
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="shop.html" class="active">Shop</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="blog.html">Journal</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <a href="cart.html" class="icon-btn" aria-label="Cart">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6h15l-1.5 9h-12L6 6zm0 0L5 3H2"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+        <span class="cart-count">0</span>
+      </a>
+      <button class="mobile-toggle" aria-label="Menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="breadcrumb">
+  <div class="container"><a href="index.html">Home</a> / Shop</div>
+</div>
+
+<section class="section" style="padding-top: 1rem;">
+  <div class="container">
+    <div class="section-head" style="margin-bottom: 2.5rem;">
+      <p class="eyebrow">The Collection</p>
+      <h2 class="stitch-underline">All Products</h2>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-group" id="category-filters">
+        <button class="filter-chip active" data-category="">All</button>
+        <button class="filter-chip" data-category="Kurti">Kurtis</button>
+        <button class="filter-chip" data-category="Saree">Sarees</button>
+        <button class="filter-chip" data-category="Suit Set">Suit Sets</button>
+      </div>
+      <select class="filter-select" id="sort-select">
+        <option value="newest">Newest First</option>
+        <option value="price_asc">Price: Low to High</option>
+        <option value="price_desc">Price: High to Low</option>
+      </select>
+    </div>
+
+    <div class="product-grid" id="product-grid">
+      <div class="product-card"><div class="product-image skeleton"></div></div>
+      <div class="product-card"><div class="product-image skeleton"></div></div>
+      <div class="product-card"><div class="product-image skeleton"></div></div>
+      <div class="product-card"><div class="product-image skeleton"></div></div>
+      <div class="product-card"><div class="product-image skeleton"></div></div>
+      <div class="product-card"><div class="product-image skeleton"></div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">
+          <img src="assets/logo.png" alt="The Chickankari Studio">
+          <span>The Chickankari Studio</span>
+        </div>
+        <p style="font-size: 0.88rem; opacity: 0.8; max-width: 280px;">Handcrafted Lucknowi Chikankari — kurtis, sarees and suits, made to order by karigars in Lucknow.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <ul><li><a href="shop.html">All Products</a></li><li><a href="shop.html">Kurtis</a></li><li><a href="shop.html">Sarees</a></li><li><a href="shop.html">Suit Sets</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h4>Studio</h4>
+        <ul><li><a href="about.html">Our Story</a></li><li><a href="blog.html">Journal</a></li><li><a href="contact.html">Contact</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h4>Get in Touch</h4>
+        <ul><li><a href="https://wa.me/910000000000" target="_blank" rel="noopener">WhatsApp Us</a></li><li><a href="mailto:hello@thechickankaristudio.com">hello@thechickankaristudio.com</a></li></ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 The Chickankari Studio. All rights reserved.</p>
+      <p>Handmade in Lucknow, India</p>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/910000000000" target="_blank" rel="noopener" class="whatsapp-float" aria-label="Chat on WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 004.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.11h-.01a8.2 8.2 0 01-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 01-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 012.41 5.83c0 4.55-3.7 8.24-8.25 8.24z"/></svg>
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/main.js"></script>
+<script>
+  let activeCategory = '';
+  let activeSort = 'newest';
+
+  function renderProductCard(p) {
+    return `
+      <a href="product.html?id=${p.id}" class="product-card">
+        <div class="product-image">
+          <img src="${p.image_url || 'https://images.unsplash.com/photo-1610030181087-540c1c9c7bcb?q=80&w=600'}" alt="${p.title}">
+          ${p.is_featured ? '<span class="product-badge">Featured</span>' : ''}
+          <div class="quick-add">View Details</div>
+        </div>
+        <h3 class="product-title">${p.title}</h3>
+        <div class="product-meta">
+          <span class="product-fabric">${p.fabric || ''}</span>
+          <span class="product-price">${formatPrice(p.price)}</span>
+        </div>
+      </a>`;
+  }
+
+  async function loadProducts() {
+    const grid = document.getElementById('product-grid');
+    const products = await fetchProducts({ category: activeCategory, sort: activeSort });
+    if (!products.length) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><h3>No products found</h3><p>Try a different filter, or check back soon — new pieces are added regularly.</p></div>`;
+      return;
+    }
+    grid.innerHTML = products.map(renderProductCard).join('');
+  }
+
+  document.getElementById('category-filters').addEventListener('click', (e) => {
+    const btn = e.target.closest('.filter-chip');
+    if (!btn) return;
+    document.querySelectorAll('#category-filters .filter-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    activeCategory = btn.dataset.category;
+    loadProducts();
+  });
+
+  document.getElementById('sort-select').addEventListener('change', (e) => {
+    activeSort = e.target.value;
+    loadProducts();
+  });
+
+  loadProducts();
+</script>
+</body>
+</html>

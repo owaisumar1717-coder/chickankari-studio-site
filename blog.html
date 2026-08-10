@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Journal — THE CHICKANKARI STUDIO</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header scrolled">
+  <div class="container">
+    <a href="index.html" class="brand"><img src="assets/logo.png" alt="The Chickankari Studio"><span>The Chickankari Studio</span></a>
+    <nav><ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="blog.html" class="active">Journal</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul></nav>
+    <div class="nav-actions">
+      <a href="cart.html" class="icon-btn" aria-label="Cart">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6h15l-1.5 9h-12L6 6zm0 0L5 3H2"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+        <span class="cart-count">0</span>
+      </a>
+      <button class="mobile-toggle" aria-label="Menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<div class="breadcrumb"><div class="container"><a href="index.html">Home</a> / Journal</div></div>
+
+<section class="section" style="padding-top: 1rem;">
+  <div class="container">
+    <div class="section-head" style="margin-bottom: 2.5rem;">
+      <p class="eyebrow">The Journal</p>
+      <h2 class="stitch-underline">Notes on the Craft</h2>
+      <p>Stories from the karigars, styling notes, and the world of Chikankari.</p>
+    </div>
+    <div class="grid-3" id="blog-grid">
+      <div class="blog-card"><div class="blog-image skeleton"></div></div>
+      <div class="blog-card"><div class="blog-image skeleton"></div></div>
+      <div class="blog-card"><div class="blog-image skeleton"></div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom"><p>&copy; 2026 The Chickankari Studio. All rights reserved.</p><p>Handmade in Lucknow, India</p></div>
+  </div>
+</footer>
+
+<a href="https://wa.me/910000000000" target="_blank" rel="noopener" class="whatsapp-float" aria-label="Chat on WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 004.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.11h-.01a8.2 8.2 0 01-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 01-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 012.41 5.83c0 4.55-3.7 8.24-8.25 8.24z"/></svg>
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/main.js"></script>
+<script>
+  function renderBlogCard(post) {
+    const date = new Date(post.published_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    return `
+      <a href="blog-post.html?slug=${post.slug}" class="blog-card">
+        <div class="blog-image"><img src="${post.cover_image || 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?q=80&w=600'}" alt="${post.title}"></div>
+        <p class="blog-date">${date}</p>
+        <h3 class="blog-title">${post.title}</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.4rem;">${post.excerpt || ''}</p>
+      </a>`;
+  }
+
+  async function loadBlog() {
+    const grid = document.getElementById('blog-grid');
+    const posts = await fetchBlogPosts();
+    if (!posts.length) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><h3>No journal entries yet</h3><p>Posts added from the admin panel will appear here.</p></div>`;
+      return;
+    }
+    grid.innerHTML = posts.map(renderBlogCard).join('');
+  }
+  loadBlog();
+</script>
+</body>
+</html>

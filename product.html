@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Product — THE CHICKANKARI STUDIO</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .product-detail { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); }
+  .product-gallery-main { aspect-ratio: 4/5; overflow: hidden; background: var(--cream); margin-bottom: var(--space-sm); }
+  .product-gallery-main img { width: 100%; height: 100%; object-fit: cover; }
+  .product-gallery-thumbs { display: flex; gap: 0.6rem; }
+  .product-gallery-thumbs img { width: 70px; height: 88px; object-fit: cover; cursor: pointer; border: 1px solid var(--line); opacity: 0.7; }
+  .product-gallery-thumbs img.active { opacity: 1; border-color: var(--gold); }
+  .pd-title { font-size: 2.2rem; margin-bottom: 0.4rem; }
+  .pd-price { font-size: 1.4rem; color: var(--gold-deep); font-weight: 500; margin-bottom: 1.2rem; }
+  .pd-fabric { font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1.5rem; }
+  .pd-desc { margin-bottom: 2rem; color: var(--text-muted); }
+  .size-options { display: flex; gap: 0.6rem; margin-bottom: 2rem; flex-wrap: wrap; }
+  .size-chip { padding: 0.6em 1.1em; border: 1px solid var(--gold-deep); cursor: pointer; font-size: 0.85rem; background: transparent; }
+  .size-chip.active { background: var(--black); color: var(--gold); border-color: var(--black); }
+  .qty-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+  .qty-control { display: flex; align-items: center; border: 1px solid var(--line); }
+  .qty-control button { width: 40px; height: 40px; background: none; border: none; cursor: pointer; font-size: 1.1rem; }
+  .qty-control span { width: 40px; text-align: center; }
+  .stock-note { font-size: 0.82rem; color: var(--gold-deep); margin-top: 0.6rem; }
+  @media (max-width: 860px) { .product-detail { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="site-header scrolled">
+  <div class="container">
+    <a href="index.html" class="brand"><img src="assets/logo.png" alt="The Chickankari Studio"><span>The Chickankari Studio</span></a>
+    <nav><ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html" class="active">Shop</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="blog.html">Journal</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul></nav>
+    <div class="nav-actions">
+      <a href="cart.html" class="icon-btn" aria-label="Cart">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6h15l-1.5 9h-12L6 6zm0 0L5 3H2"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+        <span class="cart-count">0</span>
+      </a>
+      <button class="mobile-toggle" aria-label="Menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<div class="breadcrumb"><div class="container"><a href="index.html">Home</a> / <a href="shop.html">Shop</a> / <span id="breadcrumb-title">Product</span></div></div>
+
+<section class="section" style="padding-top: 1rem;">
+  <div class="container" id="product-container">
+    <div class="empty-state"><h3>Loading…</h3></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <p>&copy; 2026 The Chickankari Studio. All rights reserved.</p>
+      <p>Handmade in Lucknow, India</p>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/910000000000" target="_blank" rel="noopener" class="whatsapp-float" aria-label="Chat on WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 004.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.11h-.01a8.2 8.2 0 01-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 01-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 012.41 5.83c0 4.55-3.7 8.24-8.25 8.24z"/></svg>
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/main.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const productId = params.get('id');
+  let selectedSize = null;
+  let qty = 1;
+  let currentProduct = null;
+
+  function renderProduct(p) {
+    currentProduct = p;
+    document.getElementById('page-title').textContent = p.title + ' — THE CHICKANKARI STUDIO';
+    document.getElementById('breadcrumb-title').textContent = p.title;
+    const images = [p.image_url, ...(p.gallery_urls || [])].filter(Boolean);
+    const mainImg = images[0] || 'https://images.unsplash.com/photo-1610030181087-540c1c9c7bcb?q=80&w=800';
+
+    document.getElementById('product-container').innerHTML = `
+      <div class="product-detail">
+        <div>
+          <div class="product-gallery-main"><img id="main-img" src="${mainImg}" alt="${p.title}"></div>
+          ${images.length > 1 ? `<div class="product-gallery-thumbs">${images.map((img, i) => `<img src="${img}" class="${i === 0 ? 'active' : ''}" data-src="${img}">`).join('')}</div>` : ''}
+        </div>
+        <div>
+          <h1 class="pd-title">${p.title}</h1>
+          <p class="pd-price">${formatPrice(p.price)} ${p.compare_at_price ? `<span style="text-decoration:line-through;color:var(--text-muted);font-size:1rem;margin-left:0.5em;">${formatPrice(p.compare_at_price)}</span>` : ''}</p>
+          <p class="pd-fabric">${p.fabric || ''} ${p.color ? '· ' + p.color : ''}</p>
+          <p class="pd-desc">${p.description || ''}</p>
+          ${p.sizes && p.sizes.length ? `
+          <div>
+            <label style="font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:0.6rem;">Select Size</label>
+            <div class="size-options" id="size-options">
+              ${p.sizes.map(s => `<button class="size-chip" data-size="${s}">${s}</button>`).join('')}
+            </div>
+          </div>` : ''}
+          <div class="qty-row">
+            <label style="font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);">Quantity</label>
+            <div class="qty-control">
+              <button id="qty-minus">−</button>
+              <span id="qty-display">1</span>
+              <button id="qty-plus">+</button>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="add-to-cart-btn" style="width:100%; justify-content:center;">Add to Cart</button>
+          ${p.stock > 0 && p.stock <= 5 ? `<p class="stock-note">Only ${p.stock} left in stock</p>` : ''}
+          ${p.stock === 0 ? `<p class="stock-note">Currently out of stock — message us on WhatsApp for restock updates</p>` : ''}
+        </div>
+      </div>`;
+
+    // Gallery thumbs
+    document.querySelectorAll('.product-gallery-thumbs img').forEach(thumb => {
+      thumb.addEventListener('click', () => {
+        document.getElementById('main-img').src = thumb.dataset.src;
+        document.querySelectorAll('.product-gallery-thumbs img').forEach(t => t.classList.remove('active'));
+        thumb.classList.add('active');
+      });
+    });
+
+    // Size select
+    const sizeButtons = document.querySelectorAll('.size-chip');
+    if (sizeButtons.length) {
+      sizeButtons.forEach(btn => btn.addEventListener('click', () => {
+        sizeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedSize = btn.dataset.size;
+      }));
+    }
+
+    // Qty controls
+    document.getElementById('qty-minus').addEventListener('click', () => {
+      qty = Math.max(1, qty - 1);
+      document.getElementById('qty-display').textContent = qty;
+    });
+    document.getElementById('qty-plus').addEventListener('click', () => {
+      qty = qty + 1;
+      document.getElementById('qty-display').textContent = qty;
+    });
+
+    // Add to cart
+    document.getElementById('add-to-cart-btn').addEventListener('click', () => {
+      if (p.sizes && p.sizes.length && !selectedSize) {
+        alert('Please select a size before adding to cart.');
+        return;
+      }
+      addToCart(p, qty, selectedSize);
+      const btn = document.getElementById('add-to-cart-btn');
+      btn.textContent = 'Added ✓';
+      setTimeout(() => { btn.textContent = 'Add to Cart'; }, 1500);
+    });
+  }
+
+  async function init() {
+    if (!productId) {
+      document.getElementById('product-container').innerHTML = `<div class="empty-state"><h3>Product not found</h3><p>Please go back to the shop and choose a product.</p></div>`;
+      return;
+    }
+    const p = await fetchProductById(productId);
+    if (!p) {
+      document.getElementById('product-container').innerHTML = `<div class="empty-state"><h3>Product not found</h3><p>This item may no longer be available.</p></div>`;
+      return;
+    }
+    renderProduct(p);
+  }
+  init();
+</script>
+</body>
+</html>

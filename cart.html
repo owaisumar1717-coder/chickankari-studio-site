@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart — THE CHICKANKARI STUDIO</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .cart-layout { display: grid; grid-template-columns: 1.6fr 1fr; gap: var(--space-lg); align-items: start; }
+  .cart-item { display: grid; grid-template-columns: 90px 1fr auto; gap: 1.2rem; padding: 1.2rem 0; border-bottom: 1px solid var(--line); align-items: center; }
+  .cart-item img { width: 90px; height: 112px; object-fit: cover; }
+  .cart-item-title { font-family: var(--font-display); font-size: 1.15rem; margin-bottom: 0.3rem; }
+  .cart-item-meta { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.6rem; }
+  .cart-item-qty { display: flex; align-items: center; border: 1px solid var(--line); width: fit-content; }
+  .cart-item-qty button { width: 32px; height: 32px; background: none; border: none; cursor: pointer; }
+  .cart-item-qty span { width: 30px; text-align: center; font-size: 0.9rem; }
+  .cart-item-remove { font-size: 0.78rem; color: var(--text-muted); text-decoration: underline; cursor: pointer; background: none; border: none; margin-top: 0.5rem; }
+  .cart-item-price { font-weight: 500; color: var(--gold-deep); white-space: nowrap; }
+  .summary-row { display: flex; justify-content: space-between; padding: 0.6rem 0; font-size: 0.92rem; }
+  .summary-total { font-size: 1.2rem; font-weight: 500; border-top: 1px solid var(--line); padding-top: 1rem; margin-top: 0.5rem; }
+  .checkout-form { display: none; margin-top: var(--space-lg); }
+  .checkout-form.open { display: block; }
+  @media (max-width: 860px) { .cart-layout { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="site-header scrolled">
+  <div class="container">
+    <a href="index.html" class="brand"><img src="assets/logo.png" alt="The Chickankari Studio"><span>The Chickankari Studio</span></a>
+    <nav><ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="blog.html">Journal</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul></nav>
+    <div class="nav-actions">
+      <a href="cart.html" class="icon-btn" aria-label="Cart">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6h15l-1.5 9h-12L6 6zm0 0L5 3H2"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+        <span class="cart-count">0</span>
+      </a>
+      <button class="mobile-toggle" aria-label="Menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<div class="breadcrumb"><div class="container"><a href="index.html">Home</a> / Cart</div></div>
+
+<section class="section" style="padding-top: 1rem;">
+  <div class="container">
+    <div class="section-head" style="margin-bottom: 2rem; text-align:left; max-width: none;">
+      <h2>Your Cart</h2>
+    </div>
+
+    <div id="cart-empty" class="empty-state" style="display:none;">
+      <h3>Your cart is empty</h3>
+      <p style="margin-bottom: 1.5rem;">Browse the collection and find something you love.</p>
+      <a href="shop.html" class="btn btn-outline-dark">Go to Shop</a>
+    </div>
+
+    <div id="cart-layout" class="cart-layout" style="display:none;">
+      <div>
+        <div id="cart-items"></div>
+      </div>
+      <div class="card">
+        <h3 style="font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 1rem;">Order Summary</h3>
+        <div class="summary-row"><span>Subtotal</span><span id="summary-subtotal">₹0</span></div>
+        <div class="summary-row" style="color: var(--text-muted); font-size:0.85rem;"><span>Shipping</span><span>Calculated at confirmation</span></div>
+        <div class="summary-row summary-total"><span>Total</span><span id="summary-total">₹0</span></div>
+        <button class="btn btn-primary" id="checkout-toggle-btn" style="width:100%; justify-content:center; margin-top: 1.2rem;">Proceed to Checkout</button>
+
+        <form class="checkout-form" id="checkout-form">
+          <div class="form-field"><label for="cf-name">Full Name</label><input type="text" id="cf-name" required></div>
+          <div class="form-field"><label for="cf-phone">Phone Number</label><input type="tel" id="cf-phone" required></div>
+          <div class="form-field"><label for="cf-email">Email (optional)</label><input type="email" id="cf-email"></div>
+          <div class="form-field"><label for="cf-address">Shipping Address</label><textarea id="cf-address" rows="3" required></textarea></div>
+          <div style="display:flex; gap:1rem;">
+            <div class="form-field" style="flex:1;"><label for="cf-city">City</label><input type="text" id="cf-city" required></div>
+            <div class="form-field" style="flex:1;"><label for="cf-pincode">Pincode</label><input type="text" id="cf-pincode" required></div>
+          </div>
+          <div class="form-field"><label for="cf-notes">Order Notes (optional)</label><textarea id="cf-notes" rows="2"></textarea></div>
+
+          <div class="form-field">
+            <label>Payment Method</label>
+            <div style="display:flex; gap:0.8rem;">
+              <label style="display:flex; align-items:center; gap:0.5rem; border:1px solid var(--line); padding:0.7em 1em; flex:1; cursor:pointer; font-size:0.85rem;">
+                <input type="radio" name="payment-method" value="razorpay" checked style="width:auto;"> Pay Online
+              </label>
+              <label style="display:flex; align-items:center; gap:0.5rem; border:1px solid var(--line); padding:0.7em 1em; flex:1; cursor:pointer; font-size:0.85rem;">
+                <input type="radio" name="payment-method" value="cod" style="width:auto;"> Cash on Delivery
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="place-order-btn" style="width:100%; justify-content:center;">Place Order</button>
+          <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.8rem; text-align:center;">Online payments are processed securely via Razorpay. COD orders are confirmed over WhatsApp.</p>
+        </form>
+      </div>
+    </div>
+
+    <div id="order-success" class="empty-state" style="display:none;">
+      <h3>Order placed ✓</h3>
+      <p id="order-number-display" style="margin-bottom: 1.5rem;"></p>
+      <p style="margin-bottom: 1.5rem; color: var(--text-muted);">We'll confirm your order and payment details over WhatsApp shortly.</p>
+      <a href="https://wa.me/910000000000" target="_blank" rel="noopener" class="btn btn-primary">Message Us on WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom"><p>&copy; 2026 The Chickankari Studio. All rights reserved.</p><p>Handmade in Lucknow, India</p></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/main.js"></script>
+<script>
+  function renderCart() {
+    const cart = getCart();
+    const emptyEl = document.getElementById('cart-empty');
+    const layoutEl = document.getElementById('cart-layout');
+
+    if (!cart.length) {
+      emptyEl.style.display = 'block';
+      layoutEl.style.display = 'none';
+      return;
+    }
+    emptyEl.style.display = 'none';
+    layoutEl.style.display = 'grid';
+
+    document.getElementById('cart-items').innerHTML = cart.map(item => `
+      <div class="cart-item" data-id="${item.id}" data-size="${item.size || ''}">
+        <img src="${item.image || 'https://images.unsplash.com/photo-1610030181087-540c1c9c7bcb?q=80&w=200'}" alt="${item.title}">
+        <div>
+          <div class="cart-item-title">${item.title}</div>
+          ${item.size ? `<div class="cart-item-meta">Size: ${item.size}</div>` : ''}
+          <div class="cart-item-qty">
+            <button class="qty-dec">−</button>
+            <span>${item.qty}</span>
+            <button class="qty-inc">+</button>
+          </div>
+          <button class="cart-item-remove">Remove</button>
+        </div>
+        <div class="cart-item-price">${formatPrice(item.price * item.qty)}</div>
+      </div>
+    `).join('');
+
+    const total = cartTotal();
+    document.getElementById('summary-subtotal').textContent = formatPrice(total);
+    document.getElementById('summary-total').textContent = formatPrice(total);
+
+    document.querySelectorAll('.cart-item').forEach(el => {
+      const id = el.dataset.id;
+      const size = el.dataset.size || null;
+      el.querySelector('.qty-inc').addEventListener('click', () => {
+        const item = getCart().find(i => i.id === id && (i.size || '') === (size || ''));
+        updateCartQty(id, size, item.qty + 1);
+        renderCart();
+      });
+      el.querySelector('.qty-dec').addEventListener('click', () => {
+        const item = getCart().find(i => i.id === id && (i.size || '') === (size || ''));
+        if (item.qty <= 1) return;
+        updateCartQty(id, size, item.qty - 1);
+        renderCart();
+      });
+      el.querySelector('.cart-item-remove').addEventListener('click', () => {
+        removeFromCart(id, size);
+        renderCart();
+      });
+    });
+  }
+
+  document.getElementById('checkout-toggle-btn').addEventListener('click', () => {
+    const form = document.getElementById('checkout-form');
+    form.classList.toggle('open');
+    document.getElementById('checkout-toggle-btn').style.display = form.classList.contains('open') ? 'none' : 'inline-flex';
+  });
+
+  function showOrderSuccess(orderNumber) {
+    localStorage.removeItem(CART_KEY);
+    document.getElementById('cart-layout').style.display = 'none';
+    document.getElementById('order-success').style.display = 'block';
+    document.getElementById('order-number-display').textContent = 'Order Number: ' + orderNumber;
+  }
+
+  function resetPlaceOrderBtn() {
+    const btn = document.getElementById('place-order-btn');
+    btn.disabled = false;
+    btn.textContent = 'Place Order';
+  }
+
+  async function payWithRazorpay(supabaseOrder) {
+    const btn = document.getElementById('place-order-btn');
+    btn.textContent = 'Opening payment…';
+
+    // Step 1: ask our Netlify function to create a Razorpay order (server-side, keeps secret key safe)
+    let rzpOrder;
+    try {
+      const res = await fetch('/.netlify/functions/create-razorpay-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: supabaseOrder.subtotal, receipt: supabaseOrder.order_number })
+      });
+      rzpOrder = await res.json();
+      if (!res.ok) throw new Error(rzpOrder.error || 'Could not start payment');
+    } catch (err) {
+      resetPlaceOrderBtn();
+      alert('Could not start payment right now. Please try again, or choose Cash on Delivery.');
+      return;
+    }
+
+    // Step 2: open Razorpay Checkout widget
+    const options = {
+      key: rzpOrder.key_id,
+      amount: rzpOrder.amount,
+      currency: rzpOrder.currency,
+      name: 'The Chickankari Studio',
+      description: 'Order ' + supabaseOrder.order_number,
+      image: 'assets/logo.png',
+      order_id: rzpOrder.razorpay_order_id,
+      prefill: {
+        name: supabaseOrder.customer_name,
+        contact: supabaseOrder.customer_phone,
+        email: supabaseOrder.customer_email || ''
+      },
+      theme: { color: '#C6A467' },
+      handler: async function (response) {
+        // Step 3: verify payment server-side and mark order as paid
+        btn.textContent = 'Verifying payment…';
+        try {
+          const verifyRes = await fetch('/.netlify/functions/verify-razorpay-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              order_id: supabaseOrder.id
+            })
+          });
+          const verifyData = await verifyRes.json();
+          if (!verifyRes.ok || !verifyData.success) throw new Error('verification failed');
+          showOrderSuccess(supabaseOrder.order_number);
+        } catch (err) {
+          resetPlaceOrderBtn();
+          alert('Payment was received but we could not confirm it automatically. Please message us on WhatsApp with your order number: ' + supabaseOrder.order_number);
+        }
+      },
+      modal: {
+        ondismiss: function () {
+          resetPlaceOrderBtn();
+        }
+      }
+    };
+
+    const rzp = new Razorpay(options);
+    rzp.on('payment.failed', function () {
+      resetPlaceOrderBtn();
+      alert('Payment failed. You can try again, or choose Cash on Delivery. Your order number is ' + supabaseOrder.order_number + ' if you need help.');
+    });
+    rzp.open();
+  }
+
+  document.getElementById('checkout-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('place-order-btn');
+    btn.disabled = true;
+    btn.textContent = 'Placing order…';
+
+    const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+    const cart = getCart();
+    const order = {
+      customer_name: document.getElementById('cf-name').value,
+      customer_phone: document.getElementById('cf-phone').value,
+      customer_email: document.getElementById('cf-email').value || null,
+      shipping_address: document.getElementById('cf-address').value,
+      city: document.getElementById('cf-city').value,
+      pincode: document.getElementById('cf-pincode').value,
+      notes: document.getElementById('cf-notes').value || null,
+      items: cart,
+      subtotal: cartTotal(),
+      payment_method: paymentMethod === 'razorpay' ? 'razorpay' : 'cod',
+      payment_status: 'unpaid'
+    };
+
+    const { data, error } = await createOrder(order);
+    if (error) {
+      resetPlaceOrderBtn();
+      alert('Something went wrong placing your order. Please try again or message us on WhatsApp.');
+      return;
+    }
+
+    if (paymentMethod === 'razorpay') {
+      await payWithRazorpay(data);
+    } else {
+      showOrderSuccess(data.order_number);
+    }
+  });
+
+  renderCart();
+</script>
+</body>
+</html>

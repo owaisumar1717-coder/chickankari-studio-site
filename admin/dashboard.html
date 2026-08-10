@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Studio Admin — THE CHICKANKARI STUDIO</title>
+<link rel="icon" href="../assets/logo.png">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<div class="admin-shell">
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="admin-sidebar">
+    <div class="brand-mini">
+      <img src="../assets/logo.png" alt="">
+      <span>Studio Admin</span>
+    </div>
+    <nav class="admin-nav">
+      <button data-tab="overview" class="active">Overview</button>
+      <button data-tab="products">Products</button>
+      <button data-tab="orders">Orders</button>
+      <button data-tab="content">Homepage Content</button>
+      <button data-tab="site-settings">Site Settings</button>
+      <button data-tab="testimonials">Testimonials</button>
+      <button data-tab="blog">Journal / Blog</button>
+      <button data-tab="instagram">Instagram Highlights</button>
+      <button data-tab="karigars">Karigars (About Page)</button>
+    </nav>
+    <a href="../index.html" target="_blank" class="view-site">↗ View Live Site</a>
+    <button class="logout-btn" id="logout-btn">Sign out (<span id="admin-email"></span>)</button>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main class="admin-main">
+
+    <!-- OVERVIEW -->
+    <section class="admin-panel active" id="panel-overview">
+      <div class="admin-header"><div><h1>Overview</h1><p>Snapshot of your store</p></div></div>
+      <div class="stat-cards">
+        <div class="stat-card"><div class="num" id="stat-products">–</div><div class="label">Total Products</div></div>
+        <div class="stat-card"><div class="num" id="stat-pending-orders">–</div><div class="label">Pending Orders</div></div>
+        <div class="stat-card"><div class="num" id="stat-revenue">–</div><div class="label">Total Order Value</div></div>
+        <div class="stat-card"><div class="num" id="stat-subscribers">–</div><div class="label">Newsletter Subscribers</div></div>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem;">Use the menu on the left to manage products, orders, homepage content, testimonials and journal posts.</p>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section class="admin-panel" id="panel-products">
+      <div class="admin-header">
+        <div><h1>Products</h1><p>Add, edit or remove items from your shop</p></div>
+      </div>
+      <div class="admin-toolbar">
+        <span></span>
+        <button class="btn btn-primary" id="add-product-btn">+ Add Product</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Image</th><th>Title</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="products-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ORDERS -->
+    <section class="admin-panel" id="panel-orders">
+      <div class="admin-header"><div><h1>Orders</h1><p>Track and update order status</p></div></div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Order #</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="orders-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- HOMEPAGE CONTENT -->
+    <section class="admin-panel" id="panel-content">
+      <div class="admin-header"><div><h1>Homepage Content</h1><p>Edit the hero banner and about section shown on your homepage</p></div></div>
+      <div class="admin-table-wrap" style="padding: 2rem; max-width: 640px;">
+        <form id="content-form">
+          <div class="form-field"><label for="cf-eyebrow">Hero Eyebrow (small label above heading)</label><input type="text" id="cf-eyebrow"></div>
+          <div class="form-field"><label for="cf-heading">Hero Heading</label><input type="text" id="cf-heading"></div>
+          <div class="form-field"><label for="cf-subtext">Hero Subtext</label><textarea id="cf-subtext" rows="3"></textarea></div>
+          <div class="form-field">
+            <label for="cf-hero-image">Hero Image</label>
+            <input type="file" id="cf-hero-image" accept="image/*">
+            <img id="hero-image-preview" class="upload-preview" style="display:none; width:160px; height:120px;">
+          </div>
+          <div class="form-field"><label for="cf-about">About Snippet (shown on homepage craft story section)</label><textarea id="cf-about" rows="4"></textarea></div>
+          <button type="submit" class="btn btn-primary" id="content-save-btn">Save Homepage Content</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- SITE SETTINGS -->
+    <section class="admin-panel" id="panel-site-settings">
+      <div class="admin-header"><div><h1>Site Settings</h1><p>WhatsApp number, Instagram link and contact email — these update the floating WhatsApp button, footer, and contact page across every page automatically</p></div></div>
+      <div class="admin-table-wrap" style="padding: 2rem; max-width: 640px;">
+        <form id="site-settings-form">
+          <div class="form-field">
+            <label for="sf-whatsapp">WhatsApp Number</label>
+            <input type="text" id="sf-whatsapp" placeholder="e.g. 918920819540 (with country code, no + or spaces)">
+          </div>
+          <div class="form-field">
+            <label for="sf-instagram">Instagram Profile URL</label>
+            <input type="url" id="sf-instagram" placeholder="https://www.instagram.com/yourhandle">
+          </div>
+          <div class="form-field">
+            <label for="sf-email">Contact Email</label>
+            <input type="email" id="sf-email" placeholder="hello@yourdomain.com">
+          </div>
+          <button type="submit" class="btn btn-primary" id="site-settings-save-btn">Save Site Settings</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="admin-panel" id="panel-testimonials">
+      <div class="admin-header"><div><h1>Testimonials</h1><p>Manage customer quotes shown on the homepage</p></div></div>
+      <div class="admin-toolbar">
+        <span></span>
+        <button class="btn btn-primary" id="add-testimonial-btn">+ Add Testimonial</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Customer</th><th>Quote</th><th>Rating</th><th>Actions</th></tr></thead>
+          <tbody id="testimonials-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- BLOG -->
+    <section class="admin-panel" id="panel-blog">
+      <div class="admin-header"><div><h1>Journal / Blog</h1><p>Write posts about the craft, styling, or studio news</p></div></div>
+      <div class="admin-toolbar">
+        <span></span>
+        <button class="btn btn-primary" id="add-post-btn">+ Add Post</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Title</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="blog-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- INSTAGRAM HIGHLIGHTS -->
+    <section class="admin-panel" id="panel-instagram">
+      <div class="admin-header"><div><h1>Instagram Highlights</h1><p>Manually curated posts shown on your homepage. Not a live feed — add or hide posts anytime.</p></div></div>
+      <div class="admin-toolbar">
+        <span></span>
+        <button class="btn btn-primary" id="add-instagram-btn">+ Add Post</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Image</th><th>Caption</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="instagram-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- KARIGARS -->
+    <section class="admin-panel" id="panel-karigars">
+      <div class="admin-header"><div><h1>Karigars</h1><p>Artisan profiles shown in the "Meet Our Karigars" section on your About page</p></div></div>
+      <div class="admin-toolbar">
+        <span></span>
+        <button class="btn btn-primary" id="add-karigar-btn">+ Add Karigar</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Photo</th><th>Name</th><th>Experience</th><th>Specialty</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="karigars-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- Product Modal -->
+<div class="modal-overlay" id="product-modal">
+  <div class="modal-box">
+    <button class="modal-close" data-modal="product-modal">&times;</button>
+    <h3 id="product-modal-title">Add Product</h3>
+    <form id="product-form">
+      <div class="form-field"><label for="pf-title">Title</label><input type="text" id="pf-title" required></div>
+      <div class="form-row-2">
+        <div class="form-field"><label for="pf-price">Price (₹)</label><input type="number" id="pf-price" min="0" step="1" required></div>
+        <div class="form-field"><label for="pf-compare-price">Compare-at Price (optional)</label><input type="number" id="pf-compare-price" min="0" step="1"></div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-field">
+          <label for="pf-category">Category</label>
+          <input type="text" id="pf-category" list="category-suggestions" placeholder="e.g. Kurti, Saree, Suit Set — or type a new one">
+          <datalist id="category-suggestions"></datalist>
+        </div>
+        <div class="form-field"><label for="pf-fabric">Fabric</label><input type="text" id="pf-fabric" placeholder="e.g. Cotton, Georgette"></div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-field"><label for="pf-color">Color</label><input type="text" id="pf-color"></div>
+        <div class="form-field"><label for="pf-stock">Stock Quantity</label><input type="number" id="pf-stock" min="0" value="0"></div>
+      </div>
+      <div class="form-field"><label for="pf-sizes">Sizes (comma-separated, e.g. S, M, L, XL)</label><input type="text" id="pf-sizes"></div>
+      <div class="form-field"><label for="pf-description">Description</label><textarea id="pf-description" rows="3"></textarea></div>
+      <div class="form-field">
+        <label for="pf-image">Main Product Image</label>
+        <input type="file" id="pf-image" accept="image/*">
+        <img id="product-image-preview" class="upload-preview" style="display:none;">
+      </div>
+      <div class="form-field">
+        <label for="pf-gallery">Additional Photos (select up to 20 at once — shown in the product gallery)</label>
+        <input type="file" id="pf-gallery" accept="image/*" multiple>
+        <div id="gallery-preview" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:0.6rem;"></div>
+      </div>
+      <div class="checkbox-field"><input type="checkbox" id="pf-featured"><label for="pf-featured">Show in Featured section on homepage</label></div>
+      <div class="checkbox-field"><input type="checkbox" id="pf-active" checked><label for="pf-active">Active (visible on the shop)</label></div>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary" id="product-save-btn">Save Product</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Order Detail Modal -->
+<div class="modal-overlay" id="order-modal">
+  <div class="modal-box">
+    <button class="modal-close" data-modal="order-modal">&times;</button>
+    <h3>Order Details</h3>
+    <div id="order-detail-body" style="font-size: 0.9rem; line-height: 1.7;"></div>
+  </div>
+</div>
+
+<!-- Testimonial Modal -->
+<div class="modal-overlay" id="testimonial-modal">
+  <div class="modal-box">
+    <button class="modal-close" data-modal="testimonial-modal">&times;</button>
+    <h3 id="testimonial-modal-title">Add Testimonial</h3>
+    <form id="testimonial-form">
+      <div class="form-field"><label for="tf-name">Customer Name</label><input type="text" id="tf-name" required></div>
+      <div class="form-field"><label for="tf-quote">Quote</label><textarea id="tf-quote" rows="3" required></textarea></div>
+      <div class="form-field"><label for="tf-rating">Rating</label>
+        <select id="tf-rating"><option value="5">5 stars</option><option value="4">4 stars</option><option value="3">3 stars</option></select>
+      </div>
+      <div class="modal-actions"><button type="submit" class="btn btn-primary">Save Testimonial</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- Blog Post Modal -->
+<div class="modal-overlay" id="post-modal">
+  <div class="modal-box">
+    <button class="modal-close" data-modal="post-modal">&times;</button>
+    <h3 id="post-modal-title">Add Journal Post</h3>
+    <form id="post-form">
+      <div class="form-field"><label for="bf-title">Title</label><input type="text" id="bf-title" required></div>
+      <div class="form-field"><label for="bf-excerpt">Short Excerpt (shown in previews)</label><textarea id="bf-excerpt" rows="2"></textarea></div>
+      <div class="form-field"><label for="bf-content">Content (one paragraph per line)</label><textarea id="bf-content" rows="8"></textarea></div>
+      <div class="form-field">
+        <label for="bf-image">Cover Image</label>
+        <input type="file" id="bf-image" accept="image/*">
+        <img id="post-image-preview" class="upload-preview" style="display:none; width:200px; height:110px;">
+      </div>
+      <div class="checkbox-field"><input type="checkbox" id="bf-published" checked><label for="bf-published">Published (visible on site)</label></div>
+      <div class="modal-actions"><button type="submit" class="btn btn-primary" id="post-save-btn">Save Post</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- Instagram Post Modal -->
+<div class="modal-overlay" id="instagram-modal">
+  <div class="modal-box">
+    <button class="modal-close" data-modal="instagram-modal">&times;</button>
+    <h3 id="instagram-modal-title">Add Instagram Post</h3>
+    <form id="instagram-form">
+      <div class="form-field">
+        <label for="if-image">Image</label>
+        <input type="file" id="if-image" accept="image/*">
+        <img id="instagram-image-preview" class="upload-preview" style="display:none;">
+      </div>
+      <div class="form-field"><label for="if-caption">Caption (optional)</label><textarea id="if-caption" rows="2"></textarea></div>
+      <div class="form-field"><label for="if-link">Link to Instagram Post (optional)</label><input type="url" id="if-link" placeholder="https://www.instagram.com/p/..."></div>
+      <div class="checkbox-field"><input type="checkbox" id="if-active" checked><label for="if-active">Show on homepage</label></div>
+      <div class="modal-actions"><button type="submit" class="btn btn-primary" id="instagram-save-btn">Save Post</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- Karigar Modal -->
+<div class="modal-overlay" id="karigar-modal">
+  <div class="modal-box">
+    <button class="modal-close" data-modal="karigar-modal">&times;</button>
+    <h3 id="karigar-modal-title">Add Karigar</h3>
+    <form id="karigar-form">
+      <div class="form-field"><label for="kf-name">Name</label><input type="text" id="kf-name" required></div>
+      <div class="form-row-2">
+        <div class="form-field"><label for="kf-experience">Years of Experience</label><input type="number" id="kf-experience" min="0"></div>
+        <div class="form-field"><label for="kf-specialty">Specialty (short line)</label><input type="text" id="kf-specialty" placeholder="e.g. Specialises in Bakhiya shadow-work"></div>
+      </div>
+      <div class="form-field">
+        <label for="kf-photo">Photo</label>
+        <input type="file" id="kf-photo" accept="image/*">
+        <img id="karigar-image-preview" class="upload-preview" style="display:none; border-radius:50%; width:100px; height:100px;">
+      </div>
+      <div class="checkbox-field"><input type="checkbox" id="kf-active" checked><label for="kf-active">Show on About page</label></div>
+      <div class="modal-actions"><button type="submit" class="btn btn-primary" id="karigar-save-btn">Save Karigar</button></div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/main.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

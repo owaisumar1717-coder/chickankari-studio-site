@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Journal — THE CHICKANKARI STUDIO</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .post-header { text-align: center; max-width: 700px; margin: 0 auto var(--space-lg); }
+  .post-cover { aspect-ratio: 16/8; overflow: hidden; margin-bottom: var(--space-lg); max-width: 1000px; margin-left: auto; margin-right: auto; }
+  .post-cover img { width: 100%; height: 100%; object-fit: cover; }
+  .post-body { max-width: 680px; margin: 0 auto; font-size: 1.05rem; color: var(--text-dark); line-height: 1.8; }
+  .post-body p { margin-bottom: 1.4rem; }
+</style>
+</head>
+<body>
+
+<header class="site-header scrolled">
+  <div class="container">
+    <a href="index.html" class="brand"><img src="assets/logo.png" alt="The Chickankari Studio"><span>The Chickankari Studio</span></a>
+    <nav><ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="blog.html" class="active">Journal</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul></nav>
+    <div class="nav-actions">
+      <a href="cart.html" class="icon-btn" aria-label="Cart">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 6h15l-1.5 9h-12L6 6zm0 0L5 3H2"/><circle cx="9" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+        <span class="cart-count">0</span>
+      </a>
+      <button class="mobile-toggle" aria-label="Menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<div class="breadcrumb"><div class="container"><a href="index.html">Home</a> / <a href="blog.html">Journal</a> / <span id="breadcrumb-title">Post</span></div></div>
+
+<section class="section" style="padding-top: 1rem;">
+  <div class="container" id="post-container">
+    <div class="empty-state"><h3>Loading…</h3></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom"><p>&copy; 2026 The Chickankari Studio. All rights reserved.</p><p>Handmade in Lucknow, India</p></div>
+  </div>
+</footer>
+
+<a href="https://wa.me/910000000000" target="_blank" rel="noopener" class="whatsapp-float" aria-label="Chat on WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 004.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2zm0 18.11h-.01a8.2 8.2 0 01-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 01-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.18 8.18 0 012.41 5.83c0 4.55-3.7 8.24-8.25 8.24z"/></svg>
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/main.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const slug = params.get('slug');
+
+  async function init() {
+    if (!slug) {
+      document.getElementById('post-container').innerHTML = `<div class="empty-state"><h3>Post not found</h3></div>`;
+      return;
+    }
+    const post = await fetchBlogPostBySlug(slug);
+    if (!post) {
+      document.getElementById('post-container').innerHTML = `<div class="empty-state"><h3>Post not found</h3><p>This entry may have been removed.</p></div>`;
+      return;
+    }
+    document.getElementById('page-title').textContent = post.title + ' — THE CHICKANKARI STUDIO';
+    document.getElementById('breadcrumb-title').textContent = post.title;
+    const date = new Date(post.published_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+    const paragraphs = (post.content || '').split('\n').filter(p => p.trim()).map(p => `<p>${p}</p>`).join('');
+    document.getElementById('post-container').innerHTML = `
+      <div class="post-header">
+        <p class="eyebrow">${date} · ${post.author || 'The Chickankari Studio'}</p>
+        <h1 style="margin-top: 0.8rem;">${post.title}</h1>
+      </div>
+      ${post.cover_image ? `<div class="post-cover"><img src="${post.cover_image}" alt="${post.title}"></div>` : ''}
+      <div class="post-body">${paragraphs}</div>
+    `;
+  }
+  init();
+</script>
+</body>
+</html>
