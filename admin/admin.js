@@ -35,6 +35,7 @@ function switchTab(tabName) {
   if (tabName === 'blog') loadBlogTable();
   if (tabName === 'instagram') loadInstagramTable();
   if (tabName === 'karigars') loadKarigarsTable();
+  if (tabName === 'coupons') loadCouponsTable();
 }
 
 document.querySelectorAll('.admin-nav button').forEach(btn => {
@@ -760,6 +761,104 @@ document.getElementById('karigar-form').addEventListener('submit', async (e) => 
   btn.textContent = 'Save Karigar';
   closeModal('karigar-modal');
   loadKarigarsTable();
+});
+
+/* ============================================
+   COUPONS
+   ============================================ */
+let editingCouponId = null;
+
+async function loadCouponsTable() {
+  const { data, error } = await supabaseClient.from('coupons').select('*').order('created_at', { ascending: false });
+  const tbody = document.getElementById('coupons-tbody');
+  if (error || !data || !data.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">No coupons yet — click "Add Coupon" to create one.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map(c => {
+    const discountLabel = c.discount_type === 'percentage' ? `${c.discount_value}%` : formatPrice(c.discount_value);
+    const usedLabel = c.usage_limit ? `${c.times_used} / ${c.usage_limit}` : `${c.times_used} / ∞`;
+    const expiresLabel = c.expires_at ? new Date(c.expires_at).toLocaleDateString('en-IN') : '—';
+    const expired = c.expires_at && new Date(c.expires_at) < new Date();
+    return `
+    <tr>
+      <td><strong>${c.code}</strong></td>
+      <td>${discountLabel}</td>
+      <td>${c.min_order_amount ? formatPrice(c.min_order_amount) : '—'}</td>
+      <td>${usedLabel}</td>
+      <td>${expiresLabel}</td>
+      <td><span class="badge ${c.is_active && !expired ? 'badge-active' : 'badge-inactive'}">${expired ? 'Expired' : (c.is_active ? 'Active' : 'Inactive')}</span></td>
+      <td class="row-actions">
+        <button onclick="editCoupon('${c.id}')">Edit</button>
+        <button class="danger" onclick="deleteCoupon('${c.id}')">Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+document.getElementById('add-coupon-btn').addEventListener('click', () => {
+  editingCouponId = null;
+  document.getElementById('coupon-form').reset();
+  document.getElementById('coupon-modal-title').textContent = 'Add Coupon';
+  openModal('coupon-modal');
+});
+
+window.editCoupon = async function(id) {
+  const { data: c } = await supabaseClient.from('coupons').select('*').eq('id', id).single();
+  if (!c) return;
+  editingCouponId = id;
+  document.getElementById('coupon-modal-title').textContent = 'Edit Coupon';
+  document.getElementById('cpf-code').value = c.code;
+  document.getElementById('cpf-type').value = c.discount_type;
+  document.getElementById('cpf-value').value = c.discount_value;
+  document.getElementById('cpf-min-order').value = c.min_order_amount || 0;
+  document.getElementById('cpf-usage-limit').value = c.usage_limit || '';
+  document.getElementById('cpf-expires').value = c.expires_at ? c.expires_at.slice(0, 10) : '';
+  document.getElementById('cpf-active').checked = c.is_active !== false;
+  openModal('coupon-modal');
+};
+
+window.deleteCoupon = async function(id) {
+  if (!confirm('Delete this coupon?')) return;
+  await supabaseClient.from('coupons').delete().eq('id', id);
+  loadCouponsTable();
+};
+
+document.getElementById('coupon-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('coupon-save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  const payload = {
+    code: document.getElementById('cpf-code').value.trim().toUpperCase(),
+    discount_type: document.getElementById('cpf-type').value,
+    discount_value: parseFloat(document.getElementById('cpf-value').value),
+    min_order_amount: parseFloat(document.getElementById('cpf-min-order').value) || 0,
+    usage_limit: document.getElementById('cpf-usage-limit').value ? parseInt(document.getElementById('cpf-usage-limit').value) : null,
+    expires_at: document.getElementById('cpf-expires').value ? new Date(document.getElementById('cpf-expires').value).toISOString() : null,
+    is_active: document.getElementById('cpf-active').checked
+  };
+
+  let saveError;
+  if (editingCouponId) {
+    const { error } = await supabaseClient.from('coupons').update(payload).eq('id', editingCouponId);
+    saveError = error;
+  } else {
+    const { error } = await supabaseClient.from('coupons').insert([payload]);
+    saveError = error;
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Save Coupon';
+
+  if (saveError) {
+    alert(saveError.message.includes('duplicate') ? 'This coupon code already exists.' : 'Could not save coupon: ' + saveError.message);
+    return;
+  }
+
+  closeModal('coupon-modal');
+  loadCouponsTable();
 });
 
 /* ---------- Init ---------- */

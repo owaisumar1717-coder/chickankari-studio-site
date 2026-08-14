@@ -86,15 +86,18 @@ Customer checkout par **"Pay Online"** (Razorpay — card/UPI/netbanking) ya **"
 
 ## Content Aap Khud Edit Kar Sakte Ho (bina code chhue)
 Admin panel (`/admin/login.html`) se:
-- **Products** — Add/Edit/Delete, images upload, price, stock, sizes
-- **Orders** — Sabhi orders dekho, status update karo (pending → confirmed → shipped → delivered)
+- **Products** — Add/Edit/Delete, images upload (main photo + up to 20 gallery photos), price, stock, sizes, category (freely type any category)
+- **Orders** — Sabhi orders dekho, status/payment status update karo
 - **Homepage Content** — Hero heading, subtext, hero image, about section text
+- **Site Settings** — WhatsApp number, Instagram link, contact email (updates every page automatically)
 - **Testimonials** — Customer reviews add/edit/delete
 - **Journal/Blog** — Craft-related posts likho, cover image ke saath
+- **Instagram Highlights** — Homepage par dikhne wale curated posts
+- **Karigars** — About page ke artisan profiles
+- **Coupons** — Discount codes banao (percentage ya fixed ₹ off), min order amount, usage limit, expiry date sab set kar sakte ho
 
 ## Cheezein Jo Aapko Khud Update Karni Hain
-- `index.html`, `shop.html` etc. mein WhatsApp number (`910000000000`) → apna asli number daalo
-- Email address (`hello@thechickankaristudio.com`) → apna asli email daalo
+- WhatsApp number, Instagram link, contact email → admin panel ke "Site Settings" tab se karo, code mein nahi
 - Razorpay setup (Step 5 dekho) — iske bina "Pay Online" checkout kaam nahi karega, lekin Cash on Delivery tab tak bhi kaam karta rahega
 
 ## Placeholder Images

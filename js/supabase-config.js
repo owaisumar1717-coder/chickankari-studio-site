@@ -3,8 +3,8 @@
    Replace these two values with your own project's
    URL and anon/public key (Supabase Dashboard → Project Settings → API)
    ============================================ */
-const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL = 'https://fxyyfxnfondqfnsyqnze.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_XxmJpCmaGC-5OS_e1hi6bw_1bMPXgF7';
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -32,6 +32,31 @@ async function fetchFeaturedProducts(limit = 4) {
   const { data, error } = await supabaseClient.from('products').select('*').eq('is_active', true).eq('is_featured', true).limit(limit);
   if (error) { console.error(error); return []; }
   return data;
+}
+
+/* ---------- Coupons ---------- */
+async function validateCoupon(code, subtotal) {
+  const { data, error } = await supabaseClient
+    .from('coupons')
+    .select('*')
+    .eq('code', code.trim().toUpperCase())
+    .eq('is_active', true)
+    .single();
+
+  if (error || !data) return { valid: false, message: 'Coupon code not found.' };
+  if (data.expires_at && new Date(data.expires_at) < new Date()) return { valid: false, message: 'This coupon has expired.' };
+  if (data.usage_limit !== null && data.times_used >= data.usage_limit) return { valid: false, message: 'This coupon has reached its usage limit.' };
+  if (subtotal < Number(data.min_order_amount || 0)) return { valid: false, message: `Minimum order of ${formatPrice(data.min_order_amount)} needed for this coupon.` };
+
+  const discount = data.discount_type === 'percentage'
+    ? Math.round(subtotal * (Number(data.discount_value) / 100))
+    : Math.min(Number(data.discount_value), subtotal);
+
+  return { valid: true, coupon: data, discount };
+}
+
+async function incrementCouponUsage(couponId, currentTimesUsed) {
+  await supabaseClient.from('coupons').update({ times_used: (currentTimesUsed || 0) + 1 }).eq('id', couponId);
 }
 
 /* ---------- Orders ---------- */

@@ -27,6 +27,7 @@
       <button data-tab="blog">Journal / Blog</button>
       <button data-tab="instagram">Instagram Highlights</button>
       <button data-tab="karigars">Karigars (About Page)</button>
+      <button data-tab="coupons">Coupons</button>
     </nav>
     <a href="../index.html" target="_blank" class="view-site">↗ View Live Site</a>
     <button class="logout-btn" id="logout-btn">Sign out (<span id="admin-email"></span>)</button>
@@ -176,6 +177,21 @@
       </div>
     </section>
 
+    <!-- COUPONS -->
+    <section class="admin-panel" id="panel-coupons">
+      <div class="admin-header"><div><h1>Coupons</h1><p>Create discount codes customers can apply at checkout</p></div></div>
+      <div class="admin-toolbar">
+        <span></span>
+        <button class="btn btn-primary" id="add-coupon-btn">+ Add Coupon</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Code</th><th>Discount</th><th>Min Order</th><th>Used</th><th>Expires</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="coupons-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
   </main>
 </div>
 
@@ -307,6 +323,34 @@
       </div>
       <div class="checkbox-field"><input type="checkbox" id="kf-active" checked><label for="kf-active">Show on About page</label></div>
       <div class="modal-actions"><button type="submit" class="btn btn-primary" id="karigar-save-btn">Save Karigar</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- Coupon Modal -->
+<div class="modal-overlay" id="coupon-modal">
+  <div class="modal-box">
+    <button class="modal-close" data-modal="coupon-modal">&times;</button>
+    <h3 id="coupon-modal-title">Add Coupon</h3>
+    <form id="coupon-form">
+      <div class="form-field"><label for="cpf-code">Coupon Code</label><input type="text" id="cpf-code" placeholder="e.g. WELCOME10" style="text-transform:uppercase;" required></div>
+      <div class="form-row-2">
+        <div class="form-field">
+          <label for="cpf-type">Discount Type</label>
+          <select id="cpf-type">
+            <option value="percentage">Percentage (%)</option>
+            <option value="fixed">Fixed Amount (₹)</option>
+          </select>
+        </div>
+        <div class="form-field"><label for="cpf-value">Discount Value</label><input type="number" id="cpf-value" min="0" step="1" required></div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-field"><label for="cpf-min-order">Minimum Order Amount (₹, optional)</label><input type="number" id="cpf-min-order" min="0" step="1" value="0"></div>
+        <div class="form-field"><label for="cpf-usage-limit">Usage Limit (optional, blank = unlimited)</label><input type="number" id="cpf-usage-limit" min="1"></div>
+      </div>
+      <div class="form-field"><label for="cpf-expires">Expiry Date (optional)</label><input type="date" id="cpf-expires"></div>
+      <div class="checkbox-field"><input type="checkbox" id="cpf-active" checked><label for="cpf-active">Active</label></div>
+      <div class="modal-actions"><button type="submit" class="btn btn-primary" id="coupon-save-btn">Save Coupon</button></div>
     </form>
   </div>
 </div>

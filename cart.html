@@ -66,7 +66,18 @@
       </div>
       <div class="card">
         <h3 style="font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 1rem;">Order Summary</h3>
+
+        <div class="form-field" style="margin-bottom: 1rem;">
+          <label for="coupon-input">Have a coupon?</label>
+          <div style="display:flex; gap:0.6rem;">
+            <input type="text" id="coupon-input" placeholder="Enter code" style="text-transform:uppercase;">
+            <button type="button" id="apply-coupon-btn" class="btn btn-outline-dark" style="white-space:nowrap;">Apply</button>
+          </div>
+          <p id="coupon-message" style="font-size: 0.8rem; margin-top: 0.5rem;"></p>
+        </div>
+
         <div class="summary-row"><span>Subtotal</span><span id="summary-subtotal">₹0</span></div>
+        <div class="summary-row" id="discount-row" style="display:none; color: var(--gold-deep);"><span>Discount (<span id="applied-coupon-code"></span>)</span><span id="summary-discount">−₹0</span></div>
         <div class="summary-row" style="color: var(--text-muted); font-size:0.85rem;"><span>Shipping</span><span>Calculated at confirmation</span></div>
         <div class="summary-row summary-total"><span>Total</span><span id="summary-total">₹0</span></div>
         <button class="btn btn-primary" id="checkout-toggle-btn" style="width:100%; justify-content:center; margin-top: 1.2rem;">Proceed to Checkout</button>
@@ -120,6 +131,55 @@
 <script src="js/supabase-config.js"></script>
 <script src="js/main.js"></script>
 <script>
+  let appliedCoupon = null; // { id, code, discount_type, discount_value, min_order_amount, times_used }
+
+  function computeDiscount(subtotal) {
+    if (!appliedCoupon) return 0;
+    if (subtotal < Number(appliedCoupon.min_order_amount || 0)) return 0;
+    return appliedCoupon.discount_type === 'percentage'
+      ? Math.round(subtotal * (Number(appliedCoupon.discount_value) / 100))
+      : Math.min(Number(appliedCoupon.discount_value), subtotal);
+  }
+
+  function updateSummary() {
+    const subtotal = cartTotal();
+    const discount = computeDiscount(subtotal);
+    const total = Math.max(0, subtotal - discount);
+    document.getElementById('summary-subtotal').textContent = formatPrice(subtotal);
+    document.getElementById('summary-total').textContent = formatPrice(total);
+    const discountRow = document.getElementById('discount-row');
+    if (discount > 0) {
+      discountRow.style.display = 'flex';
+      document.getElementById('summary-discount').textContent = '−' + formatPrice(discount);
+      document.getElementById('applied-coupon-code').textContent = appliedCoupon.code;
+    } else {
+      discountRow.style.display = 'none';
+    }
+  }
+
+  document.getElementById('apply-coupon-btn').addEventListener('click', async () => {
+    const input = document.getElementById('coupon-input');
+    const msg = document.getElementById('coupon-message');
+    const code = input.value.trim();
+    if (!code) return;
+    const btn = document.getElementById('apply-coupon-btn');
+    btn.disabled = true;
+    btn.textContent = 'Checking…';
+    const result = await validateCoupon(code, cartTotal());
+    btn.disabled = false;
+    btn.textContent = 'Apply';
+    if (!result.valid) {
+      appliedCoupon = null;
+      msg.textContent = result.message;
+      msg.style.color = 'crimson';
+    } else {
+      appliedCoupon = result.coupon;
+      msg.textContent = `Coupon applied! You saved ${formatPrice(result.discount)}.`;
+      msg.style.color = 'var(--gold-deep)';
+    }
+    updateSummary();
+  });
+
   function renderCart() {
     const cart = getCart();
     const emptyEl = document.getElementById('cart-empty');
@@ -150,9 +210,7 @@
       </div>
     `).join('');
 
-    const total = cartTotal();
-    document.getElementById('summary-subtotal').textContent = formatPrice(total);
-    document.getElementById('summary-total').textContent = formatPrice(total);
+    updateSummary();
 
     document.querySelectorAll('.cart-item').forEach(el => {
       const id = el.dataset.id;
@@ -274,6 +332,8 @@
 
     const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
     const cart = getCart();
+    const rawSubtotal = cartTotal();
+    const discount = computeDiscount(rawSubtotal);
     const order = {
       customer_name: document.getElementById('cf-name').value,
       customer_phone: document.getElementById('cf-phone').value,
@@ -283,7 +343,9 @@
       pincode: document.getElementById('cf-pincode').value,
       notes: document.getElementById('cf-notes').value || null,
       items: cart,
-      subtotal: cartTotal(),
+      subtotal: rawSubtotal - discount,
+      coupon_code: appliedCoupon ? appliedCoupon.code : null,
+      discount_amount: discount,
       payment_method: paymentMethod === 'razorpay' ? 'razorpay' : 'cod',
       payment_status: 'unpaid'
     };
@@ -293,6 +355,10 @@
       resetPlaceOrderBtn();
       alert('Something went wrong placing your order. Please try again or message us on WhatsApp.');
       return;
+    }
+
+    if (appliedCoupon) {
+      await incrementCouponUsage(appliedCoupon.id, appliedCoupon.times_used);
     }
 
     if (paymentMethod === 'razorpay') {
